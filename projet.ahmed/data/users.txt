@@ -1,0 +1,5 @@
+e500c99f-e91f-4091-adda-4732d60de1e0|Administrateur|standard|admin|$2a$10$abpZgPSVSuVvZC5qyS/wNeA.3yNArKjtE3xQaAlKzS906tF/.dZSS|ADMIN
+225e2572-68c4-4cb9-84a6-3a43be102265|Dia|etudiant|dia|$2a$10$.wzOEOLPApvO5dktSpgVr.cRa9IAxhveL8uwS6Wpm505sbm1A6RvS|USER
+b434f3f2-de76-4739-b6c9-edde061ab600|aissatou|etudiant|aicha|1234|USER
+70d4754d-9ff1-4df5-9900-7bbff26fc5a4|ahmed|etudiant|ahmed|$2a$10$sST2r26gMmbbhhrwxVID6ujULybcyPdMOJ6Q3UdPeOoFdfO5LXMRS|USER
+b64626b3-5740-481c-82c2-6e5b0ee38fd7|Albert|standart|albert|1234|USER

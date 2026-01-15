@@ -1,0 +1,33 @@
+2026-01-11T16:50:59.268170500 [INFO] Application démarrée
+2026-01-11T16:58:11.216374200 [INFO] Application démarrée
+2026-01-11T16:59:47.718255 [INFO] Location créée: Transaction c4d5c263-e74d-4391-b9c4-22ffe75c1fb7 | Livre: 123 | Utilisateur: b434f3f2-de76-4739-b6c9-edde061ab600 | Date: 2026-01-11 | Statut: EN_COURS | Retour prévu: 2026-01-23 | Retour réel: null | Pénalité: 0.0
+2026-01-11T17:00:28.416491800 [INFO] Application démarrée
+2026-01-11T17:01:08.615888800 [INFO] Application démarrée
+2026-01-11T17:13:45.215435800 [INFO] Application démarrée
+2026-01-11T17:17:38.776998600 [INFO] Application démarrée
+2026-01-11T17:28:55.108573800 [INFO] Application démarrée
+2026-01-11T17:29:54.098777600 [INFO] Achat par aicha: Transaction 1cc6ad0f-5cb7-4d85-8465-b52bbed3ed69 | Livre: 123 | Utilisateur: b434f3f2-de76-4739-b6c9-edde061ab600 | Date: 2026-01-11 | Statut: VALIDEE | Montant: 10.2€
+2026-01-11T17:32:22.844654900 [INFO] Application démarrée
+2026-01-11T17:36:24.094986700 [INFO] Application démarrée
+2026-01-11T17:37:38.059379700 [INFO] Application démarrée
+2026-01-11T17:38:46.712397200 [INFO] Application démarrée
+2026-01-11T17:39:11.059189500 [INFO] Achat par aicha: Transaction e527742a-464e-4dee-8ff1-8703dbcb113c | Livre: 123 | Utilisateur: b434f3f2-de76-4739-b6c9-edde061ab600 | Date: 2026-01-11 | Statut: VALIDEE | Montant: 10.2€
+2026-01-11T17:42:24.700787600 [INFO] Application démarrée
+2026-01-11T17:54:09.867285200 [INFO] Application démarrée
+2026-01-11T17:56:44.717276200 [INFO] Application démarrée
+2026-01-11T18:20:43.863352800 [INFO] Application démarrée
+2026-01-11T18:21:12.282709600 [INFO] Inscription utilisateur: albert id=b64626b3-5740-481c-82c2-6e5b0ee38fd7
+2026-01-11T18:22:01.583071700 [INFO] Utilisateur ajouté: admin2 (admin2) id=ecb40e2b-1d3f-4ce1-82fd-be1c572011cf
+2026-01-11T18:22:12.254938900 [INFO] Application démarrée
+2026-01-11T18:25:55.377995600 [INFO] Application démarrée
+2026-01-11T18:26:46.678108300 [INFO] Application démarrée
+2026-01-11T19:03:37.156112500 [INFO] Application démarrée
+2026-01-11T19:04:35.836151100 [INFO] Inscription utilisateur: ahmed id=70d4754d-9ff1-4df5-9900-7bbff26fc5a4
+2026-01-12T10:27:32.791608100 [INFO] Application démarrée
+2026-01-12T10:28:59.837693400 [INFO] Application démarrée
+2026-01-12T10:31:12.015620800 [INFO] Application démarrée
+2026-01-12T10:32:46.765831600 [INFO] Inscription utilisateur: dia id=225e2572-68c4-4cb9-84a6-3a43be102265
+2026-01-12T10:33:58.023027800 [INFO] Achat par dia: Transaction b4e02806-2d86-4fce-aa3a-3056b97379ec | Livre: 978 | Utilisateur: 225e2572-68c4-4cb9-84a6-3a43be102265 | Date: 2026-01-12 | Statut: VALIDEE | Montant: 8.4915DHS
+2026-01-12T10:35:40.552801800 [INFO] Location par dia: Transaction 6580414b-005d-4bcf-befb-900ae1626019 | Livre: 97 | Utilisateur: 225e2572-68c4-4cb9-84a6-3a43be102265 | Date: 2026-01-12 | Statut: EN_COURS | Retour prévu: 2026-01-14 | Retour réel: null | Pénalité: 0.0
+2026-01-12T10:37:45.145421 [INFO] Réservation par dia: Transaction 0a26336a-2eb1-473e-aded-f63b4e366fb8 | Livre: 123 | Utilisateur: 225e2572-68c4-4cb9-84a6-3a43be102265 | Date: 2026-01-12 | Statut: ACTIVE | Expiration: 2026-01-13
+2026-01-12T10:37:59.063562900 [INFO] Application démarrée
