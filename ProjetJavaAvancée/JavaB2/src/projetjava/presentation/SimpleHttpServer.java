@@ -1,21 +1,18 @@
 package projetjava.presentation;
 
-import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
-
-// Assurez-vous que ces imports correspondent à vos dossiers
-import projetjava.service.MedicalService;
-import projetjava.model.Medecin;
-import projetjava.model.RendezVous;
-import projetjava.model.Patient;
-
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import projetjava.model.Medecin;
+import projetjava.model.Patient;
+import projetjava.model.RendezVous;
+import projetjava.service.MedicalService;
 
 public class SimpleHttpServer {
     private MedicalService medicalService;
@@ -43,6 +40,10 @@ public class SimpleHttpServer {
         // 5. Gestion du cycle de vie des Rendez-vous (Démarrer / Terminer)
         server.createContext("/appointments/start", new RendezVousActionHandler("START"));
         server.createContext("/appointments/finish", new RendezVousActionHandler("FINISH"));
+
+        // 6. Gestion Undo / Redo
+        server.createContext("/actions/undo", exchange -> handleUndoRedo(exchange, "UNDO"));
+        server.createContext("/actions/redo", exchange -> handleUndoRedo(exchange, "REDO"));
 
         server.setExecutor(null); // Default executor
         server.start();
@@ -168,7 +169,18 @@ public class SimpleHttpServer {
     class RendezVousHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            if ("POST".equals(exchange.getRequestMethod())) {
+            String method = exchange.getRequestMethod();
+
+            if ("GET".equals(method)) {
+                List<RendezVous> list = medicalService.getAllRendezVous();
+                StringBuilder json = new StringBuilder("[");
+                for (RendezVous r : list) {
+                    json.append(r.toJson()).append(",");
+                }
+                if (list.size() > 0) json.deleteCharAt(json.length() - 1);
+                json.append("]");
+                sendResponse(exchange, 200, json.toString());
+            } else if ("POST".equals(method)) {
                 String body = getBody(exchange);
                 try {
                     Long pId = Long.parseLong(extractJsonValue(body, "patientId"));
@@ -186,7 +198,7 @@ public class SimpleHttpServer {
                 }
             } else {
                 // Correction : 405 est le code approprié pour une méthode non autorisée
-                sendResponse(exchange, 405, "Method Not Allowed (Use POST)");
+                sendResponse(exchange, 405, "Method Not Allowed");
             }
         }
     }
@@ -235,6 +247,22 @@ public class SimpleHttpServer {
             } else {
                 sendResponse(exchange, 405, "Method Not Allowed (Use POST)");
             }
+        }
+    }
+
+    // =========================================================
+    // HANDLER UNDO / REDO
+    // =========================================================
+    private void handleUndoRedo(HttpExchange exchange, String type) throws IOException {
+        if ("POST".equals(exchange.getRequestMethod())) {
+            if ("UNDO".equals(type)) {
+                medicalService.undoLastAction();
+            } else {
+                medicalService.redoLastAction();
+            }
+            sendResponse(exchange, 200, "{\"status\":\"Action " + type + " effectuee\"}");
+        } else {
+            sendResponse(exchange, 405, "Method Not Allowed (Use POST)");
         }
     }
 

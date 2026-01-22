@@ -5,6 +5,7 @@ import projetjava.service.MedicalService;
 import projetjava.observer.NotificationManager;
 import projetjava.observer.ConsoleLogger;
 import projetjava.observer.FileAuditLogger;
+import projetjava.patterns.DatePriorityStrategy;
 import projetjava.presentation.SimpleHttpServer;
 
 import java.io.IOException;
@@ -25,6 +26,9 @@ public class Main {
                     rdvRepo,
                     notifManager
             );
+            
+            // ACTIVATION DE LA STRATÉGIE DE TRI PAR DATE
+            service.setPriorityStrategy(new DatePriorityStrategy());
 
             SimpleHttpServer server = new SimpleHttpServer(service);
             server.start();
