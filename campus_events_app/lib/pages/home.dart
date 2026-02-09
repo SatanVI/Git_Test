@@ -52,8 +52,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // --- WIDGETS UTILITAIRES ---
-
   Widget _buildHeader() {
     return Center(
       child: Column(
@@ -137,165 +135,78 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Carte "A la une" (Grande carte verticale avec image en haut)
   Widget _buildFeaturedCard(
     DocumentSnapshot doc,
     double screenWidth,
     double screenHeight,
   ) {
     Map<String, dynamic> event = doc.data() as Map<String, dynamic>;
+    event['id'] = doc.id; // Ajout de l'ID au map
     return GestureDetector(
       onTap: () => _navigateToDetail(event),
-      child: Container(
-        width: screenWidth * 0.6, // Largeur dynamique (~60% de l'écran)
-        margin: const EdgeInsets.only(right: 15, bottom: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Image
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
-                  child: displayImage(
-                    event["image_url"],
-                    height: screenHeight * 0.2,
-                    width: double.infinity,
-                  ),
+      child: SizedBox(
+        width: screenWidth * 0.6,
+        child: Card(
+          margin: const EdgeInsets.only(right: 15, bottom: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
                 ),
-                // Bouton Favoris (Flottant)
-                Positioned(
-                  bottom: -15,
-                  right: 15,
-                  child: GestureDetector(
-                    onTap: () => _addToFavorites(event),
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.orange.withOpacity(0.4),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.bookmark,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
+                child: displayImage(
+                  event["image_url"],
+                  height: screenHeight * 0.2,
+                  width: double.infinity,
                 ),
-              ],
-            ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 25, 12, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event["title"] ?? "Sans titre",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
               ),
-            ),
-          ],
+              ListTile(
+                title: Text(
+                  event["title"] ?? "Sans titre",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.bookmark_border, color: Colors.orange),
+                  onPressed: () => _addToFavorites(event),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Carte "Wide" (Image à gauche, texte à droite)
   Widget _buildWideCard(DocumentSnapshot doc) {
     Map<String, dynamic> event = doc.data() as Map<String, dynamic>;
-    return GestureDetector(
-      onTap: () => _navigateToDetail(event),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    event['id'] = doc.id;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 15),
+      child: ListTile(
+        onTap: () => _navigateToDetail(event),
+        leading: SizedBox(
+          width: 60,
+          height: 60,
+          child: displayImage(event["image_url"], radius: 8),
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: displayImage(event["image_url"], width: 80, height: 80),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event["title"] ?? "Sans titre",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  if (event.containsKey("date")) ...[
-                    Text(
-                      event["date"] is Timestamp
-                          ? "${(event["date"] as Timestamp).toDate().day}/${(event["date"] as Timestamp).toDate().month}"
-                          : "Date inconnue",
-                      style: const TextStyle(
-                        color: Colors.blueAccent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                  ],
-                  Text(
-                    event["description"] ?? "",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.favorite_border, color: Colors.grey),
-              onPressed: () => _addToFavorites(event),
-            ),
-          ],
+        title: Text(
+          event["title"] ?? "Sans titre",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          event["description"] ?? "",
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.favorite_border, color: Colors.grey),
+          onPressed: () => _addToFavorites(event),
         ),
       ),
     );
@@ -306,6 +217,7 @@ class _HomeState extends State<Home> {
       context,
       MaterialPageRoute(
         builder: (context) => DetailPage(
+          eventId: event["id"],
           imagePath: event["image_url"] ?? "assets/images/image5.jpg",
           title: event["title"] ?? "Sans titre",
           description: event["description"] ?? "",
@@ -315,8 +227,8 @@ class _HomeState extends State<Home> {
   }
 
   void _addToFavorites(Map<String, dynamic> event) {
-    // Conversion en Map<String, String> pour compatibilité avec favories.dart
     Map<String, String> favEvent = {
+      "id": event["id"]?.toString() ?? "",
       "image": event["image_url"]?.toString() ?? "assets/images/image5.jpg",
       "title": event["title"]?.toString() ?? "Sans titre",
       "description": event["description"]?.toString() ?? "",

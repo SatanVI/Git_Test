@@ -1,120 +1,170 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:campus_events_app/pages/favories.dart';
 import 'package:campus_events_app/utils.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
+  final String? eventId;
   final String imagePath;
   final String title;
   final String description;
 
   const DetailPage({
     super.key,
+    this.eventId,
     required this.imagePath,
     required this.title,
     required this.description,
   });
 
   @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  bool isReserving = false;
+  bool isReserved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkReservationStatus();
+  }
+
+  Future<void> _checkReservationStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && widget.eventId != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('reservations')
+          .doc(widget.eventId)
+          .get();
+      if (mounted) {
+        setState(() => isReserved = doc.exists);
+      }
+    }
+  }
+
+  Future<void> _reservePlace() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      showMessage(context, "Connectez-vous pour réserver", isError: true);
+      return;
+    }
+
+    if (widget.eventId == null) {
+      showMessage(
+        context,
+        "Impossible de réserver cet événement",
+        isError: true,
+      );
+      return;
+    }
+
+    setState(() => isReserving = true);
+
+    try {
+      final reservationRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('reservations')
+          .doc(widget.eventId);
+
+      final doc = await reservationRef.get();
+
+      if (doc.exists) {
+        if (mounted) {
+          showMessage(
+            context,
+            "Vous avez déjà réservé une place",
+            isError: true,
+          );
+        }
+      } else {
+        await reservationRef.set({
+          'eventId': widget.eventId,
+          'title': widget.title,
+          'image_url': widget.imagePath,
+          'description': widget.description,
+          'reserved_at': FieldValue.serverTimestamp(),
+        });
+        if (mounted) {
+          setState(() => isReserved = true);
+          showMessage(context, "Place réservée avec succès !");
+        }
+      }
+    } catch (e) {
+      if (mounted) showMessage(context, "Erreur : $e", isError: true);
+    } finally {
+      if (mounted) setState(() => isReserving = false);
+    }
+  }
+
+  Future<void> _cancelReservation() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || widget.eventId == null) return;
+
+    setState(() => isReserving = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('reservations')
+          .doc(widget.eventId)
+          .delete();
+
+      if (mounted) {
+        setState(() => isReserved = false);
+        showMessage(context, "Réservation annulée");
+      }
+    } catch (e) {
+      if (mounted) showMessage(context, "Erreur : $e", isError: true);
+    } finally {
+      if (mounted) setState(() => isReserving = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Détails"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bookmark_border, color: Colors.orange),
+            onPressed: () {
+              Favories.favoriteItems.add({
+                "id": widget.eventId ?? "",
+                "image": widget.imagePath,
+                "title": widget.title,
+                "description": widget.description,
+              });
+              showMessage(context, "${widget.title} ajouté aux favoris !");
+            },
+          ),
+        ],
+      ),
       backgroundColor: const Color(0xFFE8ECF4),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildHeader(context), _buildContent()],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(30),
-          ),
-          child: Container(
-            height: 320,
-            width: double.infinity,
-            foregroundDecoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.center,
-                colors: [Colors.black.withOpacity(0.3), Colors.transparent],
-              ),
+          children: [
+            SizedBox(
+              height: 250,
+              width: double.infinity,
+              child: displayImage(widget.imagePath),
             ),
-            child: displayImage(imagePath),
-          ),
-        ),
-        Positioned(
-          top: 50,
-          left: 20,
-          right: 20,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildBackButton(context),
-              const Text(
-                "Details",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              _buildFavoriteButton(context),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBackButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.pop(context),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white.withOpacity(0.5)),
-        ),
-        child: const Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-          size: 20,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFavoriteButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Favories.favoriteItems.add({
-          "image": imagePath,
-          "title": title,
-          "description": description,
-        });
-        showMessage(context, "$title ajouté aux favoris !");
-      },
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFF7043),
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFF7043).withOpacity(0.4),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
+            _buildContent(),
           ],
         ),
-        child: const Icon(Icons.bookmark, color: Colors.white, size: 20),
       ),
+      bottomNavigationBar: _buildReservationButton(),
     );
   }
 
@@ -125,7 +175,7 @@ class DetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            widget.title,
             style: const TextStyle(
               color: Colors.black,
               fontSize: 28,
@@ -144,7 +194,7 @@ class DetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Text(
-            description,
+            widget.description,
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 15,
@@ -152,6 +202,53 @@ class DetailPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildReservationButton() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: isReserving
+            ? null
+            : (isReserved ? _cancelReservation : _reservePlace),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isReserved
+              ? Colors.redAccent
+              : const Color(0xFF0F4E7F),
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: isReserving
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                isReserved ? "Annuler ma réservation" : "Réserver ma place",
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

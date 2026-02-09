@@ -48,7 +48,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  // Connexion via Google
   Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(

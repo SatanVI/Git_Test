@@ -65,6 +65,19 @@ L'intégration de Google Sign-In suit un flux sécurisé en plusieurs étapes :
   - `image_url` (String) : Image de l'événement (Base64).
   - `is_featured` (Boolean) : Si l'événement doit apparaître "À la une".
 
+##  Description des Fichiers (`lib/pages`)
+
+- **`inter.dart` (WelcomePage)** : Page d'introduction affichée au lancement, proposant les options de connexion ou d'inscription.
+- **`signup.dart`** : Gère l'inscription des utilisateurs (Email/Mot de passe ou Google) et la création du profil dans Firestore (avec photo).
+- **`connexion.dart`** : Gère l'authentification des utilisateurs existants.
+- **`bottomnav.dart`** : Contient la barre de navigation (BottomNavigationBar) qui permet de naviguer entre les pages principales (Home, Réservations, Favoris, Profil).
+- **`home.dart`** : Page d'accueil affichant le fil d'actualité des événements (À la une et liste complète).
+- **`detail_page.dart`** : Affiche les détails complets d'un événement sélectionné et permet d'effectuer une réservation ou d'ajouter aux favoris.
+- **`reservations.dart`** : Liste les réservations de l'utilisateur connecté et permet de les annuler.
+- **`favories.dart`** : Affiche la liste des événements ajoutés aux favoris.
+- **`profil.dart`** : Affiche les informations personnelles de l'utilisateur et permet de se déconnecter.
+- **`add_event.dart`** : Page permettant de créer et d'uploader de nouveaux événements dans la base de données.
+
 ##  Installation et Configuration
 
 ### Prérequis
@@ -93,7 +106,7 @@ L'intégration de Google Sign-In suit un flux sécurisé en plusieurs étapes :
     - Pour que la connexion Google fonctionne, vous devez ajouter l'empreinte **SHA-1** de votre clé de signature (debug keystore) dans les paramètres de votre projet Firebase.
     - Commande pour obtenir le SHA-1 :
       - Windows : `cd android && gradlew signingReport`
-      - Mac/Linux : `cd android && ./gradlew signingReport`
+      
 
 5.  **Lancer l'application** :
     ```bash

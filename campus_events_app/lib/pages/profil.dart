@@ -20,6 +20,12 @@ class _ProfilState extends State<Profil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Mon Profil"),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       backgroundColor: const Color(0xFFE8ECF4),
       body: SafeArea(
         child: user == null
@@ -52,18 +58,6 @@ class _ProfilState extends State<Profil> {
                     ),
                     child: Column(
                       children: [
-                        _buildHeader(),
-                        const SizedBox(height: 30),
-                        const Text(
-                          "Profil",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Serif',
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 30),
                         _buildProfileImage(
                           imageUrl.isNotEmpty ? imageUrl : user?.photoURL,
                         ),
@@ -77,7 +71,11 @@ class _ProfilState extends State<Profil> {
                           ),
                         ),
                         const SizedBox(height: 50),
-                        _buildInfoRow(Icons.email, "E-Mail", email),
+                        ListTile(
+                          leading: const Icon(Icons.email),
+                          title: const Text("E-Mail"),
+                          subtitle: Text(email),
+                        ),
                         const Spacer(),
                         _buildButton(
                           text: "Ajouter un événement",
@@ -116,34 +114,6 @@ class _ProfilState extends State<Profil> {
     );
   }
 
-  Widget _buildHeader() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.transparent,
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Bottomnav()),
-                );
-              },
-            ),
-          ),
-        ),
-        Image.asset("assets/images/logorond.jpg", height: 40),
-      ],
-    );
-  }
-
   Widget _buildProfileImage(String? imageUrl) {
     return Container(
       decoration: BoxDecoration(
@@ -162,34 +132,6 @@ class _ProfilState extends State<Profil> {
         backgroundColor: Colors.grey[300],
         child: ClipOval(child: displayImage(imageUrl, width: 120, height: 120)),
       ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 28, color: Colors.black87),
-        const SizedBox(width: 20),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              value,
-              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
-            ),
-          ],
-        ),
-      ],
     );
   }
 

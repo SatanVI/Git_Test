@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
-// Fonction simplifiée pour afficher un message (Snackbar)
 void showMessage(BuildContext context, String message, {bool isError = false}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -12,7 +11,6 @@ void showMessage(BuildContext context, String message, {bool isError = false}) {
   );
 }
 
-// Fonction simplifiée pour afficher une image (Network, Asset, ou Base64)
 Widget displayImage(
   String? path, {
   double? width,
@@ -30,7 +28,6 @@ Widget displayImage(
     } else if (path.startsWith('assets/')) {
       image = AssetImage(path);
     } else {
-      // Tente de décoder le Base64 (image stockée en texte)
       image = MemoryImage(base64Decode(path));
     }
 
@@ -50,7 +47,6 @@ Widget displayImage(
   }
 }
 
-// Image par défaut si erreur ou vide
 Widget _placeholder(double? width, double? height, double radius) {
   return ClipRRect(
     borderRadius: BorderRadius.circular(radius),
